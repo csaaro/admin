@@ -1,13 +1,17 @@
+---
+const BASE_URL = import.meta.env.BASE_URL;
+---
+
 <nav class="bg-gray-200 w-64 h-full p-4 flex flex-col min-h-screen">
 	<div>
 	  <!-- Erste Sektion: Organisation -->
 	  <h2 class="text-lg font-semibold text-gray-700 mb-2">Organisation</h2>
 	  <ul class="mb-4 space-y-2">
-		<li><a href="/organization/account" class="block px-3 py-2 rounded hover:bg-gray-300">Konto</a></li>
-		<li><a href="/organization/employee" class="block px-3 py-2 rounded hover:bg-gray-300">Mitarbeiter</a></li>
+		<li><a href={`${BASE_URL}/organization/account`} class="block px-3 py-2 rounded hover:bg-gray-300">Konto</a></li>
+		<li><a href={`${BASE_URL}/organization/employee`} class="block px-3 py-2 rounded hover:bg-gray-300">Mitarbeiter</a></li>
 		<li><a href="#" class="block px-3 py-2 rounded hover:bg-gray-300">Berechtigungen</a></li>
 		<li><a href="#" class="block px-3 py-2 rounded hover:bg-gray-300">Gruppen</a></li>
-		<li><a href="/organization/customer" class="block px-3 py-2 rounded hover:bg-gray-300">Kunden</a></li>
+		<li><a href={`${BASE_URL}/organization/customer`} class="block px-3 py-2 rounded hover:bg-gray-300">Kunden</a></li>
 	  </ul>
 	</div>
   
@@ -15,7 +19,7 @@
 	  <!-- Zweite Sektion: Ablauf -->
 	  <h2 class="text-lg font-semibold text-gray-700 mb-2">Ablauf</h2>
 	  <ul class="mb-4 space-y-2">
-		<li><a href="/workflow/queue" class="block px-3 py-2 rounded hover:bg-gray-300">Warteschlangen</a></li>
+		<li><a href={`${BASE_URL}/workflow/queue`} class="block px-3 py-2 rounded hover:bg-gray-300">Warteschlangen</a></li>
 	  </ul>
 	</div>
   
