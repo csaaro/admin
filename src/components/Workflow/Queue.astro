@@ -1,0 +1,152 @@
+---
+// Dies ist eine Astro-Komponente.
+
+
+const today = new Date().toISOString().split('T')[0];
+const formatDate = (dateString) => {
+  const [year, month, day] = dateString.split('-');
+  return `${day}.${month}.${year}`;
+};
+
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+const customerNumbers = Array.from({ length: 100 }, (_, i) => 1000 + i);
+const customerNames = Array.from({ length: 100 }, (_, i) => `Kunde ${i + 1}`);
+const shuffledCustomerNumbers = shuffleArray(customerNumbers);
+const shuffledCustomerNames = shuffleArray(customerNames);
+
+const entries = shuffledCustomerNumbers.map((customerNumber, i) => {
+  const startTime = new Date(0, 0, 0, 10, (i % 20) * 5); // Startzeit bei 10:00, 5-Minuten-Slots
+  const endTime = new Date(0, 0, 0, 10, (i % 20) * 5 + 5);
+  return {
+    id: i + 1,
+    group: i % 3 === 0 ? 'A' : i % 3 === 1 ? 'B' : 'C',
+    customerNumber,
+    customerName: shuffledCustomerNames[i],
+    serviceTime: `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`,
+    date: today, // Alle Einträge auf den aktuellen Tag setzen
+  };
+});
+
+const itemsPerPage = 10;
+let currentPage = 1;
+const totalPages = Math.ceil(entries.length / itemsPerPage);
+
+const getPaginatedEntries = () => {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return entries.slice(startIndex, endIndex);
+};
+
+const goToNextPage = () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+  }
+};
+
+const goToPreviousPage = () => {
+  if (currentPage > 1) {
+    currentPage--;
+  }
+};
+---
+<div class="p-6 bg-gray-100 min-h-screen flex justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-12xl overflow-x-auto mt-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Servicezeit-Warteschlange</h1>
+
+    <!-- Datumsauswahl, Gruppenfilter und Suchfeld -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <label for="date" class="font-medium text-gray-700">Datum:</label>
+          <input
+            type="date"
+            id="date"
+            value={today}
+            class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          />
+        </div>
+        <div class="flex items-center space-x-2">
+          <label for="group" class="font-medium text-gray-700">Gruppe:</label>
+          <select
+            id="group"
+            class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          >
+            <option value="">Alle Gruppen</option>
+            <option value="A">Gruppe A</option>
+            <option value="B">Gruppe B</option>
+            <option value="C">Gruppe C</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <input
+          type="text"
+          placeholder="Suchen..."
+          class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+        />
+      </div>
+    </div>
+
+    <!-- Tabelle mit Servicezeit-Warteschlange -->
+    <table class="table-auto w-full border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border border-gray-300 px-4 py-2 text-left">Reihenfolge</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Datum</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Gruppe</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Kundennummer</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Kundenname</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Servicezeit</th>
+          <th class="border border-gray-300 px-4 py-2 text-center">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        {getPaginatedEntries().map((entry) => (
+          <tr>
+            <td class="border border-gray-300 px-4 py-2">{entry.id}</td>
+            <td class="border border-gray-300 px-4 py-2">{formatDate(entry.date)}</td>
+            <td class="border border-gray-300 px-4 py-2">{entry.group}</td>
+            <td class="border border-gray-300 px-4 py-2">{entry.customerNumber}</td>
+            <td class="border border-gray-300 px-4 py-2">{entry.customerName}</td>
+            <td class="border border-gray-300 px-4 py-2">{entry.serviceTime}</td>
+            <td class="border border-gray-300 px-4 py-2 text-center">
+              <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Bearbeiten</button>
+              <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Löschen</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <!-- Paginierung -->
+    <div class="flex justify-between items-center mt-4">
+      <button 
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+        onclick="{goToPreviousPage()}"
+        disabled={currentPage === 1}
+      >
+        Vorherige Seite
+      </button>
+      <span>Seite {currentPage} von {totalPages}</span>
+      <button 
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+        onclick="{goToNextPage()}"
+        disabled={currentPage === totalPages}
+      >
+        Nächste Seite
+      </button>
+    </div>
+
+    <!-- Eintrag hinzufügen Button -->
+    <div class="mt-6 flex justify-end">
+      <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Neuen Eintrag hinzufügen</button>
+    </div>
+  </div>
+</div>

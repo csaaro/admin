@@ -1,0 +1,124 @@
+---
+const allCustomers = Array.from({ length: 30 }, (_, i) => ({
+  group: i % 3 === 0 ? 'A' : 'B',
+  firstName: `Vorname ${i + 1}`,
+  lastName: `Nachname ${i + 1}`,
+  address: `Straße ${i + 1}, Stadt`,
+  createdAt: `2023-01-${String(i % 30 + 1).padStart(2, '0')}`,
+  lastLogin: `2023-02-${String(i % 28 + 1).padStart(2, '0')}`,
+  status: i % 2 === 0 ? 'Aktiv' : 'Inaktiv',
+  email: `kunde${i + 1}@example.com`,
+  childrenCount: Math.floor(Math.random() * 5),
+  intolerances: i % 3 === 0 ? 'Nüsse' : 'Gluten',
+  isMuslim: i % 2 === 0 ? 'Ja' : 'Nein',
+  customerNumber: 1000 + i,
+}));
+
+let searchQuery = '';
+let currentPage = 1;
+const rowsPerPage = 10;
+
+const filteredCustomers = () =>
+  allCustomers.filter(
+    (customer) =>
+      customer.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+const paginatedCustomers = () => {
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  return filteredCustomers().slice(start, end);
+};
+---
+<div class="p-6 bg-gray-100 min-h-screen flex justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-12xl overflow-x-auto mt-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Kundenverwaltung</h1>
+
+    <!-- Suchfeld -->
+    <div class="flex items-center justify-between mb-4">
+      <input
+        type="text"
+        placeholder="Kunden suchen..."
+        class="w-1/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+        value={searchQuery}
+        oninput={(e) => {
+          searchQuery = e.target.value;
+          currentPage = 1;
+        }}
+      />
+    </div>
+
+    <!-- Tabelle mit Kunden -->
+    <table class="table-auto w-full border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border border-gray-300 px-4 py-2 text-left">Gruppe</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Vorname</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Nachname</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Anschrift</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Erstellt am</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Letzter Login</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">E-Mail</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Anzahl Kinder</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Unverträglichkeiten</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Moslem</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Kundennummer</th>
+          <th class="border border-gray-300 px-4 py-2 text-center">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        {paginatedCustomers().map((customer) => (
+          <tr>
+            <td class="border border-gray-300 px-4 py-2">{customer.group}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.firstName}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.lastName}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.address}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.createdAt}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.lastLogin}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.status}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.email}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.childrenCount}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.intolerances}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.isMuslim}</td>
+            <td class="border border-gray-300 px-4 py-2">{customer.customerNumber}</td>
+            <td class="border border-gray-300 px-4 py-2 text-center">
+              <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Bearbeiten
+              </button>
+              <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                Passwort zurücksetzen
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <!-- Paginierung -->
+    <div class="flex justify-between items-center mt-4">
+      <button
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+        onclick={() => currentPage = Math.max(currentPage - 1, 1)}
+      >
+        Vorherige Seite
+      </button>
+      <span>Seite {currentPage} von {Math.ceil(filteredCustomers().length / rowsPerPage)}</span>
+      <button
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+        onclick={() => currentPage = Math.min(currentPage + 1, Math.ceil(filteredCustomers().length / rowsPerPage))}
+      >
+        Nächste Seite
+      </button>
+    </div>
+
+    <!-- Button zum Hinzufügen eines neuen Kunden -->
+    <div class="mt-6 flex justify-end">
+      <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        Neuen Kunden hinzufügen
+      </button>
+    </div>
+  </div>
+</div>

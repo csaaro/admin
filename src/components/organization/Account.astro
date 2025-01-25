@@ -1,0 +1,47 @@
+---
+// Dies ist eine Astro-Komponente.
+---
+
+<div class="p-6 bg-gray-100 min-h-screen flex justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-12xl">
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Organisation verwalten</h1>
+  
+      <form action="#" method="POST" class="space-y-4">
+        <!-- Name -->
+        <div>
+          <label for="name" class="block text-gray-700 font-medium mb-1">Name</label>
+          <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded" placeholder="Name der Organisation" required />
+        </div>
+  
+        <!-- Webseite -->
+        <div>
+          <label for="website" class="block text-gray-700 font-medium mb-1">Webseite</label>
+          <input type="url" id="website" name="website" class="w-full p-2 border border-gray-300 rounded" placeholder="https://example.com" required />
+        </div>
+  
+        <!-- Kontakt E-Mail -->
+        <div>
+          <label for="email" class="block text-gray-700 font-medium mb-1">Kontakt E-Mail</label>
+          <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded" placeholder="kontakt@example.com" required />
+        </div>
+  
+        <!-- Logo hochladen -->
+        <div>
+          <label for="logo" class="block text-gray-700 font-medium mb-1">Logo</label>
+          <input type="file" id="logo" name="logo" class="w-full p-2 border border-gray-300 rounded" />
+        </div>
+  
+        <!-- Anschrift -->
+        <div>
+          <label for="address" class="block text-gray-700 font-medium mb-1">Anschrift</label>
+          <textarea id="address" name="address" rows="3" class="w-full p-2 border border-gray-300 rounded" placeholder="Straße, Stadt, PLZ" required></textarea>
+        </div>
+  
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4">
+          <button type="reset" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Zurücksetzen</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Bearbeiten</button>
+        </div>
+      </form>
+    </div>
+  </div>
