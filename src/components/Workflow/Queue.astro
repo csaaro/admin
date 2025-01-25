@@ -1,7 +1,6 @@
 ---
 // Dies ist eine Astro-Komponente.
 
-
 const today = new Date().toISOString().split('T')[0];
 const formatDate = (dateString) => {
   const [year, month, day] = dateString.split('-');
@@ -21,31 +20,46 @@ const customerNames = Array.from({ length: 100 }, (_, i) => `Kunde ${i + 1}`);
 const shuffledCustomerNumbers = shuffleArray(customerNumbers);
 const shuffledCustomerNames = shuffleArray(customerNames);
 
-const entries = shuffledCustomerNumbers.map((customerNumber, i) => {
-  const startTime = new Date(0, 0, 0, 10, (i % 20) * 5); // Startzeit bei 10:00, 5-Minuten-Slots
-  const endTime = new Date(0, 0, 0, 10, (i % 20) * 5 + 5);
-  return {
-    id: i + 1,
-    group: i % 3 === 0 ? 'A' : i % 3 === 1 ? 'B' : 'C',
-    customerNumber,
-    customerName: shuffledCustomerNames[i],
-    serviceTime: `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`,
-    date: today, // Alle Einträge auf den aktuellen Tag setzen
-  };
-});
+const entries = Array.from({ length: 5 }, (_, groupIndex) => {
+  const groupLetter = String.fromCharCode(65 + groupIndex); // Gruppen A-E
+  return shuffledCustomerNumbers.map((customerNumber, i) => {
+    const startTime = new Date(0, 0, 0, 10, i % 60); // Startzeit bei 10:00, im Minutentakt
+    const endTime = new Date(startTime.getTime() + 60000); // 1 Minute pro Service
+    return {
+      id: i + 1 + groupIndex * 100,
+      group: groupLetter,
+      customerNumber,
+      customerName: shuffledCustomerNames[(i + groupIndex * 20) % shuffledCustomerNames.length],
+      serviceTime: `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`,
+      date: today, // Alle Einträge auf den aktuellen Tag setzen
+    };
+  });
+}).flat();
+
+let selectedGroup = "A";
 
 const itemsPerPage = 10;
 let currentPage = 1;
-const totalPages = Math.ceil(entries.length / itemsPerPage);
 
 const getPaginatedEntries = () => {
+  const filteredEntries = selectedGroup
+    ? entries.filter((entry) => entry.group === selectedGroup)
+    : entries;
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return entries.slice(startIndex, endIndex);
+  return filteredEntries.slice(startIndex, endIndex);
+};
+
+const getTotalPages = () => {
+  const filteredEntries = selectedGroup
+    ? entries.filter((entry) => entry.group === selectedGroup)
+    : entries;
+  return Math.ceil(filteredEntries.length / itemsPerPage);
 };
 
 const goToNextPage = () => {
-  if (currentPage < totalPages) {
+  if (currentPage < getTotalPages()) {
     currentPage++;
   }
 };
@@ -77,11 +91,12 @@ const goToPreviousPage = () => {
           <select
             id="group"
             class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            onchange="event => { selectedGroup = event.target.value; currentPage = 1; }"
           >
-            <option value="">Alle Gruppen</option>
-            <option value="A">Gruppe A</option>
-            <option value="B">Gruppe B</option>
-            <option value="C">Gruppe C</option>
+            <option value="A" selected>Gruppe A</option>
+            {Array.from({ length: 5 }, (_, i) => (
+              <option value={String.fromCharCode(65 + i)}>{`Gruppe ${String.fromCharCode(65 + i)}`}</option>
+            ))}
           </select>
         </div>
       </div>
@@ -134,11 +149,11 @@ const goToPreviousPage = () => {
       >
         Vorherige Seite
       </button>
-      <span>Seite {currentPage} von {totalPages}</span>
+      <span>Seite {currentPage} von {getTotalPages()}</span>
       <button 
         class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
         onclick="{goToNextPage()}"
-        disabled={currentPage === totalPages}
+        disabled={currentPage === getTotalPages()}
       >
         Nächste Seite
       </button>

@@ -1,13 +1,13 @@
 ---
 // Dies ist eine Astro-Komponente.
 
-
 const employees = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   serviceType: i % 2 === 0 ? 'Brot' : 'Gemüse',
   firstName: i % 2 === 0 ? 'Max' : 'Anna',
   lastName: i % 2 === 0 ? 'Mustermann' : 'Musterfrau',
   email: i % 2 === 0 ? 'max.mustermann@example.com' : 'anna.musterfrau@example.com',
+  phone: i % 2 === 0 ? '+49 123 456 789' : '+49 987 654 321', // Telefonnummer hinzugefügt
   lastLogin: i % 2 === 0 ? '2023-01-15' : '2023-01-10',
   createdAt: i % 2 === 0 ? '2022-12-01' : '2022-11-20',
   status: i % 2 === 0 ? 'Aktiv' : 'Inaktiv',
@@ -56,6 +56,7 @@ const goToPreviousPage = () => {
           <th class="border border-gray-300 px-4 py-2 text-left">Vorname</th>
           <th class="border border-gray-300 px-4 py-2 text-left">Nachname</th>
           <th class="border border-gray-300 px-4 py-2 text-left">E-Mail</th>
+          <th class="border border-gray-300 px-4 py-2 text-left">Telefon</th> <!-- Neue Spalte -->
           <th class="border border-gray-300 px-4 py-2 text-left">Letzter Login</th>
           <th class="border border-gray-300 px-4 py-2 text-left">Erstellt am</th>
           <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
@@ -69,6 +70,7 @@ const goToPreviousPage = () => {
             <td class="border border-gray-300 px-4 py-2">{employee.firstName}</td>
             <td class="border border-gray-300 px-4 py-2">{employee.lastName}</td>
             <td class="border border-gray-300 px-4 py-2">{employee.email}</td>
+            <td class="border border-gray-300 px-4 py-2">{employee.phone}</td> <!-- Telefonnummer anzeigen -->
             <td class="border border-gray-300 px-4 py-2">{employee.lastLogin}</td>
             <td class="border border-gray-300 px-4 py-2">{employee.createdAt}</td>
             <td class="border border-gray-300 px-4 py-2">{employee.status}</td>
